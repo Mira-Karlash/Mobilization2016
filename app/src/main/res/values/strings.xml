@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Mobilization2016</string>
+
+    <string name="tv_mobilization">МОБИЛИЗАЦИЯ</string>
+    <string name="tv_year">2016</string>
+    <string name="tv_logo">YandeX</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="tv_mobilization_size">50dp</dimen>
+    <dimen name="tv_year_size">52dp</dimen>
+    <dimen name="tv_year_marginTop">10dp</dimen>
+    <dimen name="tv_logo_size">34dp</dimen>
+</resources>
