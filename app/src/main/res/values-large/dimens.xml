@@ -4,4 +4,6 @@
     <dimen name="tv_year_size">46dp</dimen>
     <dimen name="tv_year_marginTop">10dp</dimen>
     <dimen name="tv_logo_size">24dp</dimen>
+
+    <dimen name="activity_name_size">25dp</dimen>
 </resources>

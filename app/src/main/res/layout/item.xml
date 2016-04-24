@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:text="Name"
         android:textSize="20dp"
+        android:textColor="#090909"
         android:layout_marginLeft="10dp"
         android:layout_toRightOf="@+id/image_view"/>
 
@@ -27,6 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="genres"
+        android:textColor="#989898"
         android:layout_toRightOf="@+id/image_view"
         android:layout_below="@+id/name"
         android:layout_alignLeft="@+id/name"
@@ -36,6 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="albums"
+        android:textColor="#989898"
         android:layout_toRightOf="@+id/image_view"
         android:layout_alignLeft="@+id/name"
         android:layout_alignBottom="@+id/image_view"/>

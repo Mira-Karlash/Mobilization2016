@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,76 +21,115 @@ import java.util.ArrayList;
 /**
  * Created by Mira on 23.04.2016.
  */
-public class BoxAdapter extends BaseAdapter {
-    Context context;
-    LayoutInflater lInflater;
-    String[][] objects;
-    String[][] genres;
+public class BoxAdapter extends BaseAdapter implements Filterable {
 
-    BoxAdapter(Context _context, String[][] products, String[][] _genres) {
-        context = _context;
-        //objects = products;
-        objects = new String[products.length][8];
-        System.arraycopy( products, 0, objects, 0, products.length );
-        //System.arraycopy( objects, 0, products, 0, objects.length );
-        genres = new String[_genres.length][2];
-        System.arraycopy( _genres, 0, genres, 0, _genres.length );
+    public static ArrayList<Artist> list;
 
-        lInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    private LayoutInflater lInflater;
+    private View view;
+    private Context context;
+
+    public BoxAdapter(ArrayList<Artist> list, Context context) {
+        this.list = list;
+        this.context = context;
+        lInflater = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    // кол-во элементов
+
     @Override
     public int getCount() {
-        return objects.length;
+        return list.size();
     }
 
-    // элемент по позиции
     @Override
-    public String getItem(int position) {
-        return objects[position][0];
+    public Artist getItem(int position) {
+        return list.get(position);
     }
-    //tv_id.setText(objects[position][0]
 
-    // id по позиции
     @Override
     public long getItemId(int position) {
         return position;
     }
 
-    // пункт списка
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        // используем созданные, но не используемые view
-        View view = convertView;
+    public View getView(int position, View convertView, ViewGroup viewGroup) {
+
+        view = convertView;
         if (view == null) {
-            view = lInflater.inflate(R.layout.item, parent, false);
+            view = lInflater.inflate(R.layout.item, viewGroup, false);
         }
 
-        //Product p = getProduct(position);
+        loadInfo(position);
 
-        // заполняем View в пункте списка данными из товаров: наименование, цена
-        // и картинка
-        /*((TextView) view.findViewById(R.id.tvDescr)).setText(p.name);
-        ((TextView) view.findViewById(R.id.tvPrice)).setText(p.price + "");
-        ((ImageView) view.findViewById(R.id.ivImage)).setImageResource(p.image);*/
-        ((TextView) view.findViewById(R.id.name)).setText(objects[position][1]);
-        ((TextView) view.findViewById(R.id.albums_tracks)).setText(objects[position][3]+" альбомов, "+objects[position][2]+" песен");
-        String GENRES ="";
-        for(int i =0; i<genres.length; i++){
-            if(objects[position][0].equals(genres[i][0])){
-                GENRES+=genres[i][1]+" ";
-            }
-        }
-        Log.d("Log", GENRES);
-        ((TextView) view.findViewById(R.id.genres)).setText(GENRES);
-
-        Picasso.with(context).load(objects[position][5]).into((ImageView) view.findViewById(R.id.image_view));
         return view;
     }
 
-    // товар по позиции
-    /*Product getProduct(int position) {
-        return ((Product) getItem(position));
-    }*/
+    // загрузка данных об артисте по позиции в ArrayList
+
+    private void loadInfo(int position) {
+
+        Artist artist = list.get(position);
+
+        Picasso.with(context).load(artist.getImage_small()).into((ImageView) view.findViewById(R.id.image_view));
+
+        TextView textViewName = (TextView) view.findViewById(R.id.name);
+        textViewName.setText(artist.getName());
+        TextView textViewGenres = (TextView) view.findViewById(R.id.genres);
+
+        //преобразование списка жанров в одну строку
+        StringBuilder sb = new StringBuilder();
+        for (String genre : artist.getGenres()) {
+            sb.append(genre+" ");
+        }
+        try {
+            sb.deleteCharAt(sb.lastIndexOf(", "));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        textViewGenres.setText(sb.toString());
+        TextView textViewAlbumsAndTracks = (TextView) view.findViewById(R.id.albums_tracks);
+        textViewAlbumsAndTracks.setText(artist.getAlbums()+" альбомов, "+artist.getTracks()+" песен");
+
+
+    }
+
+    public ArrayList<Artist> listFiltered;
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                final FilterResults oReturn = new FilterResults();
+                final ArrayList<Artist> results = new ArrayList<Artist>();
+                if (listFiltered == null)
+                    listFiltered = list;
+                if (constraint != null) {
+                    if (listFiltered != null && listFiltered.size() > 0) {
+                        for (final Artist g : listFiltered) {
+                            if (g.getName().toLowerCase()
+                                    .contains(constraint.toString()))
+                                results.add(g);
+                        }
+                    }
+                    oReturn.values = results;
+                }
+                return oReturn;
+            }
+
+            @SuppressWarnings("unchecked")
+            @Override
+            protected void publishResults(CharSequence constraint,
+                                          FilterResults results) {
+                list = (ArrayList<Artist>) results.values;
+                notifyDataSetChanged();
+            }
+        };
+
+    }
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+    }
 }
